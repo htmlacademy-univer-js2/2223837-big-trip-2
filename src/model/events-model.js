@@ -1,9 +1,11 @@
 import { generateEvent } from '../mock/event';
 
 export default class EventsModel {
-  #events = Array.from({ length: 3 }, generateEvent);
+  constructor() {
+    this._events = Array.from({ length: 3 }, generateEvent);
+  }
 
   get events() {
-    return this.#events;
+    return this._events;
   }
 }
