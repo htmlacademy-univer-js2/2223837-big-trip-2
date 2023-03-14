@@ -6,27 +6,19 @@ const createDestionationsOptionsTemplate = (destinations) =>
   destinations.reduce((result, destination) =>
     result.concat(`<option value="${destination.name}"></option>\n`), '');
 
-const createAvailableOptionsTemplate = (offers, event) => {
-  const availableOffers = OFFERS_BY_TYPE.find((item) => (item.type === event)).offers;
+const createAvailableOptionsTemplate = (offers, eventType) => {
+  const availableOffers = OFFERS_BY_TYPE.find((item) => (item.type === eventType)).offers;
+  const selectedOffers = availableOffers.map((offer) => OFFERS.find((item) => item.id === offer));
+  return selectedOffers.map((offer) =>
+    `<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').pop()}-${offer.id}" type="checkbox" name="event-offer-${offer.title.split(' ').pop()}">
+      <label class="event__offer-label" for="event-offer-${offer.title.split(' ').pop()}-${offer.id}">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </label>
+    </div>`).join('\n');
 
-  let offerOptions = '';
-
-  for (const offerId of availableOffers) {
-    for (const offer of offers) {
-      if (offerId === offer.id) {
-        offerOptions = offerOptions.concat(`<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.split(' ').pop()}-1" type="checkbox" name="event-offer-${offer.title.split(' ').pop()}">
-          <label class="event__offer-label" for="event-offer-${offer.title.split(' ').pop()}-1">
-            <span class="event__offer-title">${offer.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
-          </label>
-        </div>\n`);
-      }
-    }
-  }
-
-  return offerOptions;
 };
 
 const createDestinationDescriptionTemplate = (destinations, name) => destinations.find((it) => it.name === name).description;
@@ -118,7 +110,7 @@ const createEditFormTemplate = (event) => {
               <section class="event__section  event__section--offers">
                 <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                 <div class="event__available-offers">
-                ${createAvailableOptionsTemplate(OFFERS, type)}
+                ${createAvailableOptionsTemplate(OFFERS_BY_TYPE, type)}
                 </div>
               </section>
               <section class="event__section  event__section--destination">
@@ -130,22 +122,25 @@ const createEditFormTemplate = (event) => {
 };
 
 export default class EditFormView {
+  #element;
+  #event;
+
   constructor(event) {
-    this.event = event;
+    this.#event = event;
   }
 
-  getTemplate() {
-    return createEditFormTemplate(this.event);
+  get template() {
+    return createEditFormTemplate(this.#event);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
