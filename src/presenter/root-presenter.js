@@ -2,24 +2,25 @@ import EditFormView from '../view/edit-form-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EventView from '../view/event-view.js';
 import { render } from '../render.js';
-import AddFormView from '../view/add-form-view.js';
 
 export default class RootPresenter {
-  #rootContainer;
-  #eventsModel;
-  #events;
-  #eventList = new EventsListView();
+  constructor() {
+    this._rootContainer = null;
+    this._eventsModel = null;
+    this._events = null;
+    this._eventList = new EventsListView();
+  }
 
-  #renderEvent = (event) => {
+  _renderEvent(event) {
     const eventComponent = new EventView(event);
     const eventEditComponent = new EditFormView(event);
 
     const eventToEdit = () => {
-      this.#eventList.element.replaceChild(eventEditComponent.element, eventComponent.element);
+      this._eventList.element.replaceChild(eventEditComponent.element, eventComponent.element);
     };
 
     const editToEvent = () => {
-      this.#eventList.element.replaceChild(eventComponent.element, eventEditComponent.element);
+      this._eventList.element.replaceChild(eventComponent.element, eventEditComponent.element);
     };
 
     const onEscKeyDown = (evt) => {
@@ -46,17 +47,14 @@ export default class RootPresenter {
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    render(eventComponent, this.#eventList.element);
-  };
+    render(eventComponent, this._eventList.element);
+  }
 
   init(rootContainer, eventsModel) {
-    this.#rootContainer = rootContainer;
-    this.#eventsModel = eventsModel;
-    this.#events = [...this.#eventsModel.events];
-
-    render(this.#eventList, this.#rootContainer);
-    // render(new AddFormView(this.#events[0]), this.#eventList.element);
-
-    this.#events.forEach((event) => this.#renderEvent(event));
+    this._rootContainer = rootContainer;
+    this._eventsModel = eventsModel;
+    this._events = [...this._eventsModel.events];
+    render(this._eventList, this._rootContainer);
+    this._events.forEach((event) => this._renderEvent(event));
   }
 }

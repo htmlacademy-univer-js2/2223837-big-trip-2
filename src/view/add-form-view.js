@@ -143,11 +143,10 @@ const createEventAddTemplate = () => (
 );
 
 export default class AddFormView {
-  #element = null;
-  #event = null;
 
   constructor(point) {
-    this.#event = point;
+    this._element = null;
+    this._event = point;
   }
 
   get template() {
@@ -155,14 +154,14 @@ export default class AddFormView {
   }
 
   get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
+    if (!this._element) {
+      this._element = createElement(this.template);
     }
 
-    return this.#element;
+    return this._element;
   }
 
   removeElement() {
-    this.#element = null;
+    this._element = null;
   }
 }
