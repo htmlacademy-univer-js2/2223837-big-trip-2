@@ -40,7 +40,6 @@ export default class EventsModel extends Observable {
   };
 
   updateEvent = async (updateType, update) => {
-    // debugger
     const index = this.#events.findIndex((event) => event.id === update.id);
 
     if (index === -1) {
