@@ -23,7 +23,7 @@ const eventsModel = new EventsModel(new EventsApiService(END_POINT, AUTHORIZATIO
 const tripInfoPresenter = new TripInfoPresenter(tripMainElement, eventsModel);
 const rootPresenter = new RootPresenter(contentElement, eventsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersElement, filterModel, eventsModel);
-const newEventButtonComponent = new NewEventButtonView();
+export const newEventButtonComponent = new NewEventButtonView();
 
 const closeNewEventFormHandler = () => {
   newEventButtonComponent.element.disabled = false;
