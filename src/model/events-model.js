@@ -1,5 +1,5 @@
 import Observable from '../framework/observable';
-import { UPDATE_TYPES } from '../const';
+import {UPDATE_TYPES} from '../const';
 import dayjs from 'dayjs';
 
 export default class EventsModel extends Observable {
@@ -35,6 +35,8 @@ export default class EventsModel extends Observable {
       this.#events = [];
       this.#offers = [];
       this.#destinations = [];
+      this._notify(UPDATE_TYPES.ERROR);
+      return;
     }
     this._notify(UPDATE_TYPES.INIT);
   };
@@ -45,6 +47,7 @@ export default class EventsModel extends Observable {
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
     }
+
     try {
       const response = await this.#eventsApiService.updateEvent(update);
       const updated = this.#adaptToClient(response);

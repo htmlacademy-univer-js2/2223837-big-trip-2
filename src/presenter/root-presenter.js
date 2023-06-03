@@ -8,6 +8,8 @@ import { sortByPrice, sortByDuration, sortByDate, filter } from '../utils';
 import { SORT_TYPES, UPDATE_TYPES, USER_ACTIONS, FILTER_TYPES, TIME_LIMIT } from '../const';
 import NewEventPresenter from './new-event-presenter';
 import UiBlocker from '../framework/ui-blocker/ui-blocker';
+import ErrorView from '../view/error-view';
+import {newEventButtonComponent} from '../main';
 
 
 export default class RootPresenter {
@@ -16,7 +18,9 @@ export default class RootPresenter {
   #filterModel;
   #sortComponent = null;
   #loadingComponent = new LoadingView();
+  #errorComponent = new ErrorView();
   #isLoading = true;
+  #isError = false;
   #eventsList = new EventsListView();
   #emptyList = null;
   #eventPresenter = new Map();
@@ -35,9 +39,7 @@ export default class RootPresenter {
   }
 
 
-  init = () => {
-    this.#render();
-  }
+  init = () => this.#render();
 
   get events() {
     this.#filterType = this.#filterModel.filter;
@@ -124,6 +126,12 @@ export default class RootPresenter {
         remove(this.#loadingComponent);
         this.#render();
         break;
+      case UPDATE_TYPES.ERROR:
+        this.#isLoading = false;
+        this.#isError = true;
+        remove(this.#loadingComponent);
+        this.#render();
+        break;
       default:
         throw new Error(`Update Type ${updateType} is undefined.`);
     }
@@ -145,9 +153,7 @@ export default class RootPresenter {
     this.#eventPresenter.set(event.id, eventPresenter);
   };
 
-  #renderEvents = (events) => {
-    events.forEach((event) => this.#renderEvent(event));
-  };
+  #renderEvents = (events) => events.forEach((event) => this.#renderEvent(event));
 
   #renderSort = () => {
     if (this.#sortComponent instanceof SortingView) {
@@ -164,15 +170,20 @@ export default class RootPresenter {
     render(this.#emptyList, this.#rootContainer);
   }
 
-  #renderLoading = () => {
-    render(this.#loadingComponent, this.#rootContainer);
-  };
+  #renderLoading = () => render(this.#loadingComponent, this.#rootContainer);
+  #renderError = () => render(this.#errorComponent, this.#rootContainer);
 
   #render = () => {
     const events = this.events;
     render(this.#eventsList, this.#rootContainer);
     if (this.#isLoading) {
       this.#renderLoading();
+      return;
+    }
+
+    if (this.#isError) {
+      this.#renderError();
+      newEventButtonComponent.element.disabled = true;
       return;
     }
 

@@ -23,7 +23,6 @@ export default class NewEventPresenter {
     if (this.#editComponent !== null) {
       return;
     }
-
     this.#editComponent = new EditFormView(undefined, this.#offers, this.#destinations);
     this.#editComponent.setSaveHandler(this.#saveHandler);
     this.#editComponent.setDeleteHandler(this.#deleteHandler);
